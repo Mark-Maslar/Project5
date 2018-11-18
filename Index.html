@@ -749,10 +749,10 @@
       "stateMutability": "view",
       "type": "function"
     }
-  ]            
+  ]          
             );
             // Grab the contract at specified deployed address with the interface defined by the ABI
-            var starNotary = StarNotary.at('0x4569b0acfc65d721af5d4c069f5211eba0b79079');
+            var starNotary = StarNotary.at('0x66644aea32223e79c4d7e80b4add61626fd18480');
             
             let defaultAccount = getAccount();
             console.log('defaultAccount: ' + defaultAccount);
@@ -784,12 +784,14 @@
                         console.log(error)
                         return
                     }
+                    defaultAccount = web3.eth.accounts[0];
+
                   });
-                   let account = getAccount();
-                    //var account = web3.eth.accounts[0]; //web3.eth.defaultAccount;
-                    // Set the MetaMask account from a list of test accounts 
+                    //let account = getAccount();
+                    // let defaultAccount = web3.eth.accounts[0]; //web3.eth.defaultAccount;
+                    //Set the MetaMask account from a list of test accounts 
                     //web3.eth.defaultAccount = accounts[0]; //web3.eth.accounts[0];
-                    //console.log('Default Account: ' + web3.eth.defaultAccount);                    
+                    console.log('Default Account: ' + web3.eth.defaultAccount);                    
                     console.log('Create star account: ' + defaultAccount);
                     let name = document.getElementById('star-name').value;
                     let story = document.getElementById('star-story').value;
@@ -798,7 +800,7 @@
                     let cent = document.getElementById('star-cent').value;
                     let mag = document.getElementById('star-mag').value;
 
-                    starNotary.createStar(name, story, dec, ra, cent, mag, {from: account, "gasPrice": 0}, function (error, result) {
+                    starNotary.createStar(name, story, dec, ra, cent, mag, {from: defaultAccount, "gasPrice": 0}, function (error, result) {
                       console.log('inside starNotary.createStar'); 
                       if (error) { 
                         console.log('createStar error: ' + error);
