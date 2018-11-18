@@ -60,26 +60,7 @@ contract StarNotary is ERC721 {
         emit starClaimed(msg.sender, _tokenId);        
     }  
 
-    //function getStars() view public returns (uint256[]) {
-    // function getStars() public returns (uint256[]) {
-    //     emit starCollectionEvent(starCollection);
-    //     return starCollection;
-    // }
-
-    // function getStar(uint256 _tokenID) view public returns (string, string, string, string, string) {
-    //     return (Stars[_tokenID].name, Stars[_tokenID].story, Stars[_tokenID].dec, Stars[_tokenID].mag, Stars[_tokenID].cent);
-    // }  
-    // function getStar(uint256 _tokenID) view public returns (string, string, string, string, string) {
-    //     return (Stars[_tokenID]);
-    // }         
-
-    // function getStarCount() view public returns (uint) {
-    //     return starCollection.length;
-    // }    
-
     function checkIfStarExists(string _dec, string _ra, string _cent) public view returns (bool){
-    //function checkIfStarExists(string _dec, string _ra, string _cent) public returns (bool){
-
         uint256 _tokenId = uint256(getStarHash(_dec, _ra, _cent));
         emit starLookupResult(tokenIdToStarInfo[_tokenId].name, tokenIdToStarInfo[_tokenId].story, tokenIdToStarInfo[_tokenId].dec, tokenIdToStarInfo[_tokenId].ra, tokenIdToStarInfo[_tokenId].cent, tokenIdToStarInfo[_tokenId].mag);
 
@@ -97,7 +78,6 @@ contract StarNotary is ERC721 {
 
 
     function getStarInfo(string _dec, string _ra, string _cent) view public {
-    //function getStarInfo(string _dec, string _ra, string _cent) public {
         uint256 _tokenId = uint256(getStarHash(_dec, _ra, _cent));
         emit starLookupResult(tokenIdToStarInfo[_tokenId].name, tokenIdToStarInfo[_tokenId].story, tokenIdToStarInfo[_tokenId].dec, tokenIdToStarInfo[_tokenId].ra, tokenIdToStarInfo[_tokenId].cent, tokenIdToStarInfo[_tokenId].mag);
         return;
@@ -134,15 +114,15 @@ contract StarNotary is ERC721 {
         //TODO Check the Price offered?
 
         uint256 starCost = starsForSale[_tokenId];
-        address starOwner = this.ownerOf(_tokenId);
+        address owner = this.ownerOf(_tokenId);
         
         require(msg.value >= starCost);
 
-        // _removeTokenFrom(starOwner, _tokenId);
-        // _addTokenTo(msg.sender, _tokenId);
+        _removeTokenFrom(owner, _tokenId);
+        _addTokenTo(msg.sender, _tokenId);
 
-        // starOwner.transfer(starCost);
-        safeTransferFrom(starOwner, msg.sender, _tokenId, starCost);
+        owner.transfer(starCost);
+        //safeTransferFrom(owner, msg.sender, _tokenId, starCost);
 
         if(msg.value > starCost) { 
             msg.sender.transfer(msg.value - starCost);
@@ -157,11 +137,11 @@ contract StarNotary is ERC721 {
         return starsForSale[_tokenId];
     }
 
-    function safeTransferFrom(address _currentStarOwner, address _newStarOwner, uint256 _tokenId, uint256 _starCost) public {
-        _removeTokenFrom(_currentStarOwner, _tokenId);
-        _addTokenTo(_newStarOwner, _tokenId);
+    // function safeTransferFrom(address _currentStarOwner, address _newStarOwner, uint256 _tokenId, uint256 _starCost) public {
+    //     _removeTokenFrom(_currentStarOwner, _tokenId);
+    //     _addTokenTo(_newStarOwner, _tokenId);
 
-        _currentStarOwner.transfer(_starCost);
-    }
+    //     _currentStarOwner.transfer(_starCost);
+    // }
 
 }
