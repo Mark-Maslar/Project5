@@ -11,7 +11,7 @@ contract('StarNotary', accounts => {
     describe('can create a star', () => {
         it('can create a star and read its properties', async function () {
             const result0 = await contractInstance.createStar('an awesome star', 'some story', '11', '21', '31', '41');
-            const result1 = await contractInstance.tokenIdToStarInfo(1);
+            const result1 = await contractInstance.tokenIdToStarInfo(0);
             assert.deepEqual(result1, ['an awesome star', 'ra_100', 'dec_010', 'mag_001', 'some story']);
 
             const result2 = await uint256(contractInstance.getStarHash('1', '2', '3'));
