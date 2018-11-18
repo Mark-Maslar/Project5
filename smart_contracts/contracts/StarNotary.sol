@@ -4,17 +4,17 @@ import 'openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
 
 
 contract StarNotary is ERC721 { 
-    string public starName; 
-    address public starOwner;
+    // string public starName; 
+    // address public starOwner;
 
     event starClaimed(address owner, uint256 tokenId);
     event starLookupResult(string name, string story, string dec, string ra, string cent, string mag);
-    event starCollectionEvent(uint256[] allStars);
+    event starCollectionEvent(uint256[] createdStars);
     event checkIfStarExistsResult(bool starExists);
     
 
     constructor() public { 
-        starName = "Awesome Udacity Star";
+        //starName = "Awesome Udacity Star";
     }
 
 
@@ -27,14 +27,16 @@ contract StarNotary is ERC721 {
         string mag; 
     }
 
-    mapping(uint256 => Star) public tokenIdToStarInfo; 
-    mapping(uint256 => uint256) public starsForSale;
+    
+    mapping(uint256 => Star) public tokenIdToStarInfo; // Map TokenID to Star properties
+    mapping(uint256 => uint256) public starsForSale; // Map stars up for sale
+    mapping(uint256 => bool) public createdStars; // Map all stars that have been created
+    mapping(uint256 => address) public starOwner; // Map TokenID to Star Owner
 
     //mapping(uint256 => Star) public Stars;
-    uint256[] public starCollection;
+    // uint256[] public starCollection;
     
-    // Create a mapping of the hash of the 3 star parameters to the star object
-    mapping(bytes32 => Star) public sfdsdfs; //sfdsdfs[key is coordinate hash]
+
 
     function createStar(string _name, string _story, string _dec, string _ra, string _cent, string _mag) public { 
         require(bytes(_name).length > 0, "Required Parameter: Star Name.");
@@ -49,18 +51,20 @@ contract StarNotary is ERC721 {
         Star memory newStar = Star(_name, _story, _dec, _ra, _cent, _mag);
         
         tokenIdToStarInfo[_tokenId] = newStar;
-
+        createdStars[_tokenId] = true;
+        starOwner[_tokenId] = msg.sender;
+ 
         emit starLookupResult(tokenIdToStarInfo[_tokenId].name, tokenIdToStarInfo[_tokenId].story, tokenIdToStarInfo[_tokenId].dec, tokenIdToStarInfo[_tokenId].ra, tokenIdToStarInfo[_tokenId].cent, tokenIdToStarInfo[_tokenId].mag);
 
         _mint(msg.sender, _tokenId);
         emit starClaimed(msg.sender, _tokenId);        
     }  
 
-    function getStars() view public returns (uint256[]) {
-        emit starCollectionEvent(starCollection);
-        return starCollection;
-
-    }
+    //function getStars() view public returns (uint256[]) {
+    // function getStars() public returns (uint256[]) {
+    //     emit starCollectionEvent(starCollection);
+    //     return starCollection;
+    // }
 
     // function getStar(uint256 _tokenID) view public returns (string, string, string, string, string) {
     //     return (Stars[_tokenID].name, Stars[_tokenID].story, Stars[_tokenID].dec, Stars[_tokenID].mag, Stars[_tokenID].cent);
@@ -69,72 +73,76 @@ contract StarNotary is ERC721 {
     //     return (Stars[_tokenID]);
     // }         
 
-    function getStarCount() view public returns (uint) {
-        return starCollection.length;
-    }    
+    // function getStarCount() view public returns (uint) {
+    //     return starCollection.length;
+    // }    
 
-    function checkIfStarExists(string _dec, string _ra, string _cent) view public returns (bool){
+    function checkIfStarExists(string _dec, string _ra, string _cent) public view returns (bool){
+    //function checkIfStarExists(string _dec, string _ra, string _cent) public returns (bool){
 
         uint256 _tokenId = uint256(getStarHash(_dec, _ra, _cent));
         emit starLookupResult(tokenIdToStarInfo[_tokenId].name, tokenIdToStarInfo[_tokenId].story, tokenIdToStarInfo[_tokenId].dec, tokenIdToStarInfo[_tokenId].ra, tokenIdToStarInfo[_tokenId].cent, tokenIdToStarInfo[_tokenId].mag);
 
-        bool starExists = true;
+        //bool starExists = true;
 
-        if ((keccak256(abi.encodePacked(tokenIdToStarInfo[_tokenId].dec)) == keccak256("")) && 
-            (keccak256(abi.encodePacked(tokenIdToStarInfo[_tokenId].ra)) == keccak256("")) &&
-            (keccak256(abi.encodePacked(tokenIdToStarInfo[_tokenId].cent)) == keccak256("")))
-        starExists = false;
-
+        // if ((keccak256(abi.encodePacked(tokenIdToStarInfo[_tokenId].dec)) == keccak256("")) && 
+        //     (keccak256(abi.encodePacked(tokenIdToStarInfo[_tokenId].ra)) == keccak256("")) &&
+        //     (keccak256(abi.encodePacked(tokenIdToStarInfo[_tokenId].cent)) == keccak256("")))
+        // starExists = false;
+        bool starExists = createdStars[_tokenId];
  
         emit checkIfStarExistsResult(starExists);
         return (starExists);
     }
 
 
-
     function getStarInfo(string _dec, string _ra, string _cent) view public {
-
+    //function getStarInfo(string _dec, string _ra, string _cent) public {
         uint256 _tokenId = uint256(getStarHash(_dec, _ra, _cent));
         emit starLookupResult(tokenIdToStarInfo[_tokenId].name, tokenIdToStarInfo[_tokenId].story, tokenIdToStarInfo[_tokenId].dec, tokenIdToStarInfo[_tokenId].ra, tokenIdToStarInfo[_tokenId].cent, tokenIdToStarInfo[_tokenId].mag);
         return;
     }
 
-
+    function ownerOf(uint256 _tokenId) public view returns (address){
+        return (starOwner[_tokenId]);
+    }
 
     function putStarUpForSale(uint256 _tokenId, uint256 _price) public { 
         require(this.ownerOf(_tokenId) == msg.sender);
         starsForSale[_tokenId] = _price;
     } 
 
-    function claimStar(uint256 _tokenId) public payable { 
-        //TODO Use _tokenId
-        starOwner = msg.sender;
-        //emit starClaimed(msg.sender);
-        emit starClaimed(msg.sender, _tokenId); 
+    function approve(uint256 _tokenId) public view returns(bool){
+        require(starOwner[_tokenId] == msg.sender, "You dont' own this star.");
+        //You're approved!  
+        return true;      
     }
 
+    // function starName() public view returns(string) { 
+    //     return starName;
+    // }    
 
-    function starName() public view returns(string) { 
-        return starName;
-    }    
-
-    function starOwner() public view returns(address) { 
-        return starOwner;
-    }     
+    // function starOwner() public view returns(address) { 
+    //     return starOwner;
+    // }     
 
 
     function buyStar(uint256 _tokenId) public payable { 
-        require(starsForSale[_tokenId] > 0);
+        require(starsForSale[_tokenId] > 0, "This star isn't for sale.");
+        require(approve(_tokenId));
+
+        //TODO Check the Price offered?
 
         uint256 starCost = starsForSale[_tokenId];
-        //address starOwner = this.ownerOf(_tokenId);
-        starOwner = this.ownerOf(_tokenId);
+        address starOwner = this.ownerOf(_tokenId);
+        
         require(msg.value >= starCost);
 
-        _removeTokenFrom(starOwner, _tokenId);
-        _addTokenTo(msg.sender, _tokenId);
+        // _removeTokenFrom(starOwner, _tokenId);
+        // _addTokenTo(msg.sender, _tokenId);
 
-        starOwner.transfer(starCost);
+        // starOwner.transfer(starCost);
+        safeTransferFrom(starOwner, msg.sender, _tokenId, starCost);
 
         if(msg.value > starCost) { 
             msg.sender.transfer(msg.value - starCost);
@@ -145,8 +153,15 @@ contract StarNotary is ERC721 {
         return keccak256(abi.encodePacked(_dec, _ra, _cent));
     }     
 
-    function starsForSale() public view returns (uint256[]) {
-        return starCollection;
+    function starsForSale(uint256 _tokenId) public view returns (uint256) {
+        return starsForSale[_tokenId];
+    }
+
+    function safeTransferFrom(address _currentStarOwner, address _newStarOwner, uint256 _tokenId, uint256 _starCost) public {
+        _removeTokenFrom(_currentStarOwner, _tokenId);
+        _addTokenTo(_newStarOwner, _tokenId);
+
+        _currentStarOwner.transfer(_starCost);
     }
 
 }
