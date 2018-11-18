@@ -1,0 +1,25 @@
+{
+  "name": "project5_dapp",
+  "version": "1.0.0",
+  "description": "Blockchain has the potential to change the way that the world approaches data. Develop Blockchain skills by understanding the data model behind Blockchain by developing your own simplified private blockchain.",
+  "main": "Proj5SimpleChain.js",
+  "dependencies": {
+    "bitcoinjs-lib": "^4.0.1",
+    "bitcoinjs-message": "^2.0.0",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.3",
+    "hapi": "^17.5.4",
+    "js-sha256": "^0.9.0",
+    "level": "^4.0.0",
+    "openzeppelin-solidity": "2.0.0-rc.1",
+    "promise": "^8.0.1",
+    "truffle-hdwallet-provider": "0.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
