@@ -36,13 +36,6 @@ contract StarNotary is ERC721 {
     // Create a mapping of the hash of the 3 star parameters to the star object
     mapping(bytes32 => Star) public sfdsdfs; //sfdsdfs[key is coordinate hash]
 
-    // function createStar(string _name, uint256 _tokenId) public { 
-    //     Star memory newStar = Star(_name);
-
-    //     tokenIdToStarInfo[_tokenId] = newStar;
-
-    //     _mint(msg.sender, _tokenId);
-    // }
     function createStar(string _name, string _story, string _dec, string _ra, string _cent, string _mag) public { 
         require(bytes(_name).length > 0, "Required Parameter: Star Name.");
         require(bytes(_story).length > 0, "Required Parameter: Star Story.");
@@ -50,7 +43,7 @@ contract StarNotary is ERC721 {
         require(bytes(_ra).length > 0, "Required Parameter: Star ra ");
         require(bytes(_cent).length > 0, "Required Parameter: Star cent ");
         require(bytes(_mag).length > 0, "Required Parameter: Star mag ");   
-        require(checkIfStarExists(_dec, _ra, _cent), "Star already exists.");   
+        //require(checkIfStarExists(_dec, _ra, _cent), "Star already exists.");   
 
         uint256 _tokenId = uint256(getStarHash(_dec, _ra, _cent));
         Star memory newStar = Star(_name, _story, _dec, _ra, _cent, _mag);
